@@ -1,0 +1,57 @@
+<UserControl x:Class="EventLogCollector.Gui.Views.RecordingPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800" d:DesignHeight="500">
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Recording" FontSize="24" FontWeight="Bold" Margin="0,0,0,24" />
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,24">
+            <TextBlock Text="Save logs to" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding LogsDirectory, UpdateSourceTrigger=LostFocus}"
+                         Width="480" Padding="8,6" VerticalContentAlignment="Center"
+                         IsEnabled="{Binding CanEditLogsDirectory}" />
+                <Button Content="Browse..." Padding="14,6" Margin="10,0,0,0"
+                        Command="{Binding BrowseLogsDirectoryCommand}" />
+            </StackPanel>
+            <TextBlock Text="{Binding LogsDirectoryStatus}" FontSize="12" Margin="0,6,0,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#2E7D32" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLogsDirectoryValid}" Value="False">
+                                <Setter Property="Foreground" Value="#C62828" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="Start Recording" Padding="18,10" Margin="0,0,12,0"
+                    Command="{Binding StartCommand}" />
+            <Button Content="Stop Recording" Padding="18,10"
+                    Command="{Binding StopCommand}" />
+        </StackPanel>
+
+        <Border Grid.Row="3" Margin="0,32,0,0" Padding="18" Background="#11000000" CornerRadius="6">
+            <StackPanel>
+                <TextBlock Text="{Binding StatusText}" FontSize="16" TextWrapping="Wrap" />
+                <TextBlock Margin="0,10,0,0" FontSize="14" Opacity="0.7">
+                    <Run Text="Bytes recorded: " /><Run Text="{Binding BytesRecorded, StringFormat={}{0:N0}}" />
+                </TextBlock>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

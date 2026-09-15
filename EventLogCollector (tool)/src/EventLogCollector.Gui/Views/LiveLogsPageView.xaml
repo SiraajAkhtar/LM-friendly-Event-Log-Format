@@ -1,0 +1,64 @@
+<UserControl x:Class="EventLogCollector.Gui.Views.LiveLogsPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="900" d:DesignHeight="600">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="GroupedDetailRows" Source="{Binding DetailRows}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Section" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </UserControl.Resources>
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Column="0">
+            <TextBlock DockPanel.Dock="Top" Text="Logs" FontSize="24" FontWeight="Bold" Margin="0,0,0,12" />
+            <DataGrid ItemsSource="{Binding Entries}"
+                      SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Timestamp" Width="150"
+                                         Binding="{Binding LocalTimestamp, StringFormat={}{0:d/M/yy HH:mm:ss}}" />
+                    <DataGridTextColumn Header="Description" Width="3*" Binding="{Binding Description}" />
+                    <DataGridTextColumn Header="Context" Width="2*" Binding="{Binding Context}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <DockPanel Grid.Column="2">
+            <TextBlock DockPanel.Dock="Top" Text="Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,12" />
+            <Button DockPanel.Dock="Bottom" Content="Open File Location" Margin="0,12,0,0" Padding="8"
+                    Command="{Binding OpenFileLocationCommand}" />
+            <DataGrid ItemsSource="{Binding Source={StaticResource GroupedDetailRows}}"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                      CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Field" Width="*" Binding="{Binding Header}" />
+                    <DataGridTextColumn Header="Value" Width="2*" Binding="{Binding Value}" />
+                </DataGrid.Columns>
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border Background="#FF5A6B7A" Padding="10,4" Margin="0,6,0,0">
+                                    <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" FontSize="12" />
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+            </DataGrid>
+        </DockPanel>
+    </Grid>
+</UserControl>

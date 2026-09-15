@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+
+    <!--
+      Publish as a single, self-contained .exe: the .NET runtime is bundled in, so
+      `dotnet publish -c Release` produces a file that runs on a fresh Windows machine with
+      zero installs, launched by double-clicking it — no `dotnet run`, no SDK/runtime prereq.
+      RuntimeIdentifier is required for both SelfContained and PublishSingleFile.
+
+      Gated on _IsPublishing (set by the SDK only during `dotnet publish`) rather than applied
+      unconditionally: an unconditional SelfContained=true here makes `dotnet build` treat this
+      as a self-contained executable, which NETSDK1151 then refuses to let any other project
+      (e.g. EventLogCollector.Tests, which needs a ProjectReference here for the
+      LogSessionRepository/CorrelationGrouping regression tests) reference at all.
+    -->
+    <SelfContained Condition="'$(_IsPublishing)' == 'true'">true</SelfContained>
+    <RuntimeIdentifier Condition="'$(_IsPublishing)' == 'true'">win-x64</RuntimeIdentifier>
+    <PublishSingleFile Condition="'$(_IsPublishing)' == 'true'">true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract Condition="'$(_IsPublishing)' == 'true'">true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile Condition="'$(_IsPublishing)' == 'true'">true</EnableCompressionInSingleFile>
+
+    <!--
+      Require administrator privileges on launch (UAC prompt) instead of relying on the user
+      to right-click -> "Run as administrator". Event Log channels like Security need admin
+      to subscribe to, so this avoids a silently-degraded session from a non-elevated launch.
+    -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EventLogCollector\EventLogCollector.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+</Project>
